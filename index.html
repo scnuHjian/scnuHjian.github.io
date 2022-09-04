@@ -146,6 +146,127 @@
           <div id="js-content" class="content-ll">
             
   
+    <article id="post-滑动窗口" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2022/09/02/%E6%BB%91%E5%8A%A8%E7%AA%97%E5%8F%A3/">滑动窗口</a>
+    </h1>
+  
+
+        
+        <a href="/2022/09/02/%E6%BB%91%E5%8A%A8%E7%AA%97%E5%8F%A3/" class="archive-article-date">
+  	<time datetime="2022-09-02T06:53:14.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2022-09-02</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="滑动窗口知识"><a href="#滑动窗口知识" class="headerlink" title="滑动窗口知识"></a>滑动窗口知识</h1><h3 id="引言"><a href="#引言" class="headerlink" title="引言"></a>引言</h3><p>​	滑动窗口，在计算机网络中主要应用在传输层(即 slide window protocol)，即接收方可以通过告诉发送方自己接收窗口的大小来控制发送方的发送窗口的大小，以免发送方的发送速度过快淹没了部分信息，从而达到流量控制的效果。这与我们在相应题目所使用的滑动窗口算法类似</p>
+<p>​	一般来说，滑动窗口是通过在字符串或者是数组上来维护两个左右指针(两个指针之内的部分即为窗口),我们可以通过移动左右指针来对窗口进行更改，以让窗口来满足题目的条件</p>
+<p>​	其操作一般如下:</p>
+<pre><code> 1. 扩大操作，即让 窗口 扩大，一般是向右移动右指针
+ 2. 缩小操作， 即让窗口缩小， 一般是向左移动左指针
+</code></pre>
+<p>​	当然也可以向左移动左指针 或者 向左移动右指针 ，但是我们一般是从左向右遍历整个数组&#x2F;字符串，所以这两种情况必然包括在上面两种操作的子集中，所以便没有必要去做无用功</p>
+<h3 id="一般题型"><a href="#一般题型" class="headerlink" title="一般题型"></a>一般题型</h3><p>​	根据窗口的长度变化与否，我们可以把题目分成一下两种</p>
+<p>​	. 窗口长度固定</p>
+<p>​	. 窗口长度不定 $\begin{cases} 求解满足题目条件的最小窗口\ 求解满足题目条件的最大窗口 \end{cases}  $</p>
+<h3 id="固定窗口题目"><a href="#固定窗口题目" class="headerlink" title="固定窗口题目"></a>固定窗口题目</h3><p>一般会给出窗口大小window_size, 左指针left, 右指针right, 则[ left ,right ]则为我们的窗口.题目的求解步骤一般如下</p>
+<ol>
+<li>在初始阶段，我们设置left &#x3D; 0, right &#x3D; 0.即让我们的左右指针均指向第一个元素</li>
+<li>当我们的窗口[left,right] 的大小小于 window_size 时 我们可以 不断移动右指针，以扩大窗口值，直至窗口值达到window_size</li>
+<li>当窗口大小等于window_size时，我们可以判断该窗口是否满足题目给出的条件,根据条件满足与否，我们可以做出下列决定<ol>
+<li>如果满足条件，则可以更新最优解</li>
+<li>如果不满足条件，则跳过</li>
+</ol>
+</li>
+<li>在判断完成后， 我们应当向右移动左右两指针，以维持窗口大小始终为window_size</li>
+<li>重复以上步骤，直至 right指针到达终点</li>
+</ol>
+<h3 id="题目代码模板"><a href="#题目代码模板" class="headerlink" title="题目代码模板"></a>题目代码模板</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span>&#123;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">    nums : 要求解的 数组，也可以为字符串</span></span><br><span class="line"><span class="comment">    k : 要求的窗口大小</span></span><br><span class="line"><span class="comment">    **/</span></span><br><span class="line"> 	<span class="keyword">public</span> <span class="type">int</span> <span class="title function_">solve</span><span class="params">(<span class="type">int</span>[] nums,<span class="type">int</span> k)</span>&#123;</span><br><span class="line">        <span class="type">int</span> <span class="variable">left</span> <span class="operator">=</span> <span class="number">0</span>; <span class="comment">//左指针</span></span><br><span class="line">        <span class="type">int</span> <span class="variable">right</span> <span class="operator">=</span> <span class="number">0</span>; <span class="comment">//右指针</span></span><br><span class="line">        <span class="type">int</span> <span class="variable">res</span> <span class="operator">=</span> <span class="number">0</span>; <span class="comment">//结果</span></span><br><span class="line">        <span class="type">int</span> <span class="variable">n</span> <span class="operator">=</span> nums.length; <span class="comment">//数组大小 也可以 为字符串的大小</span></span><br><span class="line">        <span class="type">Queue</span> <span class="variable">queue</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ArrayDeque</span>();</span><br><span class="line">        <span class="comment">//此时窗口大小(即为right - left + 1)未达到规定大小 k</span></span><br><span class="line">        <span class="keyword">while</span>(right - left + <span class="number">1</span> &lt; k)&#123;</span><br><span class="line">            queue.add(nums[i]);</span><br><span class="line">            right++; <span class="comment">//移动右指针 持续扩大窗口</span></span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">while</span>(right &lt; n)&#123;</span><br><span class="line">            <span class="keyword">if</span>(...)&#123;</span><br><span class="line">                <span class="comment">//如果窗口的 东西满足 某个条件则 更新 res</span></span><br><span class="line">            &#125;</span><br><span class="line">            left++;</span><br><span class="line">            right++;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> res;</span><br><span class="line">    &#125;   </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>下面可以来看一道类似的例题 <strong>(请不要直接粘贴以下代码进行题目提交)</strong></p>
+<p><a target="_blank" rel="noopener" href="https://leetcode.cn/problems/number-of-sub-arrays-of-size-k-and-average-greater-than-or-equal-to-threshold/">1343. 大小为 K 且平均值大于等于阈值的子数组数目</a></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="type">int</span> <span class="title function_">numOfSubarrays</span><span class="params">(<span class="type">int</span>[] arr, <span class="type">int</span> k, <span class="type">int</span> threshold)</span> &#123;</span><br><span class="line">        <span class="type">int</span> <span class="variable">n</span> <span class="operator">=</span> arr.length; <span class="comment">//数组长度</span></span><br><span class="line">	    <span class="type">int</span> <span class="variable">sum</span> <span class="operator">=</span> <span class="number">0</span>; <span class="comment">//记录 窗口内值的总和</span></span><br><span class="line">        <span class="type">int</span> <span class="variable">left</span> <span class="operator">=</span> <span class="number">0</span>; <span class="comment">//左指针</span></span><br><span class="line">        <span class="type">int</span> <span class="variable">right</span> <span class="operator">=</span> <span class="number">0</span>; <span class="comment">//右指针</span></span><br><span class="line">        <span class="type">int</span> <span class="variable">res</span> <span class="operator">=</span> <span class="number">0</span>; <span class="comment">//记录满足条件的子数组的数量</span></span><br><span class="line">        <span class="comment">//right - left + 1为窗口大小</span></span><br><span class="line">        <span class="keyword">while</span>(right &lt; n)&#123;</span><br><span class="line">            sum += arr[right]; <span class="comment">//将 arr[right]加入窗口</span></span><br><span class="line">            <span class="keyword">if</span>(right - left + <span class="number">1</span> &gt;= k)&#123; <span class="comment">//窗口大小为 k 后 才进行左指针右移</span></span><br><span class="line">                <span class="keyword">if</span>(sum &gt;= k * threshold)&#123;</span><br><span class="line">                    res++;</span><br><span class="line">                &#125;</span><br><span class="line">                sum -= arr[left++]; <span class="comment">//将 左指针 右移</span></span><br><span class="line">            &#125;</span><br><span class="line">            right++; <span class="comment">//右指针右移</span></span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> res;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="1052-爱生气的书店老板"><a href="#1052-爱生气的书店老板" class="headerlink" title="1052. 爱生气的书店老板"></a><a target="_blank" rel="noopener" href="https://leetcode.cn/problems/grumpy-bookstore-owner/">1052. 爱生气的书店老板</a></h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="type">int</span> <span class="title function_">maxSatisfied</span><span class="params">(<span class="type">int</span>[] customers, <span class="type">int</span>[] grumpy, <span class="type">int</span> minutes)</span> &#123;</span><br><span class="line">		<span class="type">int</span> <span class="variable">res</span> <span class="operator">=</span> <span class="number">0</span>;</span><br><span class="line">        <span class="type">int</span> <span class="variable">n</span> <span class="operator">=</span> customers.length;</span><br><span class="line">        <span class="keyword">for</span>(<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">0</span>; i &lt; n; i++)&#123;</span><br><span class="line">             res += customers[i] * (<span class="number">1</span> - grumpy[i]); <span class="comment">//统计老板不生气时候总共有多少顾客 这部分不随minntes变化</span></span><br><span class="line">        &#125;</span><br><span class="line">        <span class="type">int</span> <span class="variable">increase</span> <span class="operator">=</span> <span class="number">0</span>; <span class="comment">//记录老板忍耐 可以增加多少顾客</span></span><br><span class="line">        <span class="comment">//此时minutes可以视为窗口大小</span></span><br><span class="line">        <span class="keyword">for</span>(<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">0</span>; i &lt; minutes; i++)&#123;</span><br><span class="line">            increase += customers[i] * grumpy[i]; <span class="comment">//此时统计受气包</span></span><br><span class="line">        &#125;</span><br><span class="line">        <span class="type">int</span> <span class="variable">maxIncrease</span> <span class="operator">=</span> increase; <span class="comment">//记录最大的增长数</span></span><br><span class="line">        <span class="keyword">for</span>(<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> minutes; i &lt; n; i++)&#123;</span><br><span class="line">            increase += customers[i] * grumpy[i]; <span class="comment">//右指针移动到新节点</span></span><br><span class="line">            increase -= customers[i - minutes] * grumpy[i - minutes]; <span class="comment">//左指针移动到新节点 想想为什么</span></span><br><span class="line">            maxIncrease = Math.max(maxIncrease,increase);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> res + maxIncrease; <span class="comment">//本来满意的顾客数 加上忍耐后增加的顾客数</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="不定窗口类型题目"><a href="#不定窗口类型题目" class="headerlink" title="不定窗口类型题目"></a>不定窗口类型题目</h3><ol>
+<li>初始化左右指针 left,right指向序列的第一个元素，即让left &#x3D; right &#x3D; 0,此时窗口为[left,right]</li>
+<li>当窗口内的元素满足题目要求时，不断向右移动右指针,同时将nums[right]加入到窗口中</li>
+<li>此时根据题目条件更新res(即结果)</li>
+<li>当窗口的元素不满足题目条件时，不断移动左指针，将nums[left]剔除出窗口，直到窗口内元素重新满足题意</li>
+<li>重复2步骤，直至right到达nums末尾</li>
+</ol>
+<h3 id="代码模板"><a href="#代码模板" class="headerlink" title="代码模板"></a>代码模板</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span>&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">solve</span><span class="params">(<span class="type">int</span>[] nums)</span>&#123;</span><br><span class="line">        <span class="type">int</span> <span class="variable">left</span> <span class="operator">=</span> <span class="number">0</span>,right = <span class="number">0</span>;</span><br><span class="line">        <span class="type">int</span> <span class="variable">n</span> <span class="operator">=</span> nums.length;</span><br><span class="line">        <span class="type">int</span> <span class="variable">res</span> <span class="operator">=</span> <span class="number">0</span>;</span><br><span class="line">        HashSet&lt;Integer&gt; set = <span class="keyword">new</span> <span class="title class_">HashSet</span>();</span><br><span class="line">        <span class="keyword">while</span>(right &lt; n)&#123;</span><br><span class="line">            set.add(nums[right]);</span><br><span class="line">            <span class="keyword">while</span>(...)&#123;</span><br><span class="line">              <span class="comment">//不满足条件</span></span><br><span class="line">                set.remove(nums[left]);</span><br><span class="line">                left++;</span><br><span class="line">            &#125;</span><br><span class="line">            res = Math.max(res,right-left+<span class="number">1</span>);</span><br><span class="line">            right++;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> res;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="题目"><a href="#题目" class="headerlink" title="题目"></a>题目</h3><h4 id="904-水果成篮"><a href="#904-水果成篮" class="headerlink" title="904. 水果成篮"></a><a target="_blank" rel="noopener" href="https://leetcode.cn/problems/fruit-into-baskets/">904. 水果成篮</a></h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="type">int</span> <span class="title function_">totalFruit</span><span class="params">(<span class="type">int</span>[] fruits)</span> &#123;</span><br><span class="line">        <span class="comment">//只能容忍 两个数 且 该两个数组成的 序列最长 返回其长度</span></span><br><span class="line">        <span class="type">int</span> <span class="variable">left</span> <span class="operator">=</span> <span class="number">0</span>;</span><br><span class="line">        <span class="type">int</span> <span class="variable">n</span> <span class="operator">=</span> fruits.length;</span><br><span class="line">        <span class="type">int</span> <span class="variable">res</span> <span class="operator">=</span> <span class="number">0</span>;</span><br><span class="line">        HashMap&lt;Integer, Integer&gt; map = <span class="keyword">new</span> <span class="title class_">HashMap</span>&lt;&gt;();</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">rigth</span> <span class="operator">=</span> <span class="number">0</span>; rigth &lt; n; rigth++) &#123;</span><br><span class="line">            map.put(fruits[rigth],map.getOrDefault(fruits[rigth],<span class="number">0</span>)+<span class="number">1</span>);</span><br><span class="line">            <span class="keyword">while</span>(map.size() &gt; <span class="number">2</span>)&#123;</span><br><span class="line">                <span class="type">Integer</span> <span class="variable">freq</span> <span class="operator">=</span> map.get(fruits[left]);</span><br><span class="line">                <span class="keyword">if</span>(freq == <span class="number">1</span>)&#123;</span><br><span class="line">                    map.remove(fruits[left]);</span><br><span class="line">                &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                    map.put(fruits[left],freq-<span class="number">1</span>);</span><br><span class="line">                &#125;</span><br><span class="line">                left++;</span><br><span class="line">            &#125;</span><br><span class="line">            res = Math.max(res,rigth - left + <span class="number">1</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> res;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="1438-绝对差不超过限制的最长连续子数组"><a href="#1438-绝对差不超过限制的最长连续子数组" class="headerlink" title="1438. 绝对差不超过限制的最长连续子数组"></a><a target="_blank" rel="noopener" href="https://leetcode.cn/problems/longest-continuous-subarray-with-absolute-diff-less-than-or-equal-to-limit/">1438. 绝对差不超过限制的最长连续子数组</a></h4><blockquote>
+<p>TreeMap是一个有序图，具体可以参考jdk文档</p>
+</blockquote>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="type">int</span> <span class="title function_">longestSubarray</span><span class="params">(<span class="type">int</span>[] nums, <span class="type">int</span> limit)</span> &#123;</span><br><span class="line">        <span class="type">int</span> <span class="variable">res</span> <span class="operator">=</span> <span class="number">0</span>;</span><br><span class="line">        <span class="type">int</span> <span class="variable">n</span> <span class="operator">=</span> nums.length;</span><br><span class="line">        <span class="type">int</span> <span class="variable">left</span> <span class="operator">=</span> <span class="number">0</span>;</span><br><span class="line">        <span class="type">int</span> <span class="variable">right</span> <span class="operator">=</span> <span class="number">0</span>;</span><br><span class="line">        TreeMap&lt;Integer, Integer&gt; map = <span class="keyword">new</span> <span class="title class_">TreeMap</span>&lt;&gt;();</span><br><span class="line">        <span class="keyword">while</span>(right &lt; n)&#123;</span><br><span class="line">            map.put(nums[right],map.getOrDefault(nums[right],<span class="number">0</span>)+<span class="number">1</span>);</span><br><span class="line">            <span class="keyword">while</span>(map.lastKey() - map.firstKey() &gt; limit)&#123;</span><br><span class="line">                map.put(nums[left],map.get(nums[left])-<span class="number">1</span>);</span><br><span class="line">                <span class="keyword">if</span>(map.get(nums[left]) == <span class="number">0</span>)&#123;</span><br><span class="line">                    map.remove(nums[left]);</span><br><span class="line">                &#125;</span><br><span class="line">                left++;</span><br><span class="line">            &#125;</span><br><span class="line">            res = Math.max(res,right-left+<span class="number">1</span>);</span><br><span class="line">            right++;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> res;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">滑动窗口</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2022/09/02/%E6%BB%91%E5%8A%A8%E7%AA%97%E5%8F%A3/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-a-test-blog" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -388,6 +509,10 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">test</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">滑动窗口</a>
               </li>
             
             <div class="clearfix"></div>
